@@ -1,0 +1,186 @@
+---
+title: "Homework 1"
+author: "Kyle Reed"
+toc: true
+number-sections: true
+highlight-style: pygments
+format: 
+  html: 
+    code-fold: true
+    html-math-method: katex
+  pdf: 
+    geometry: 
+      - top=30mm
+      - left=20mm
+##  docx: Never, unless to accommodate a collaborator
+---
+# How to set up SSH authentication between your computer and your GitHub account.
+
+## Getting started with Github and Git Bash
+
+1. Create a Github account or login with an existing account.
+2. From there download Git Bash or an equivalent command line-tool to start the SSH key creation process
+3. To download Git Bash follow the link: Git - Downloads
+4. Once you are at the site download the version of Git Bash that is compatible with your device
+5. After installation and setup, open Git Bash to start creating the SSH Key
+
+## Create The Key
+
+To create the key use these steps along with the code below:
+
+1. Create a new folder/directory to store the key in and enter that workspace
+2. Create the key with the email used for your account
+3. Create a name and password for the key
+4. Ensure the key is properly create using ls
+5. Check and link the key to an agent
+6. Copy the key URL to your clipboard and link it to Github (directions below on how to do)
+7. Ensure the key is properly linked
+Note: All code needed for this is below and the sections get into greater specificity
+
+Below is the code I used in the Git Bash terminal to create an SSH Key
+
+```{bash}
+Kyle@DESKTOP-VN55514 MINGW64 ~
+#Create a new folder 
+$ mkdir ~/Stat3255
+
+Kyle@DESKTOP-VN55514 MINGW64 ~
+#Enter that workspace
+$ cd ~/Stat3255
+
+Kyle@DESKTOP-VN55514 MINGW64 ~/Stat3255
+#Use the command below to create a new key linked to your email
+$ ssh-keygen -t ed25519 -C "kyle.reed@uconn.edu"
+Generating public/private ed25519 key pair.
+#Create file name for key
+Enter file in which to save the key (/c/Users/Kyle/.ssh/id_ed25519): Key1
+#Create password for the key
+Enter passphrase for "Key1" (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in Key1
+Your public key has been saved in Key1.pub
+The key fingerprint is:
+SHA256:29V/WWSFzVBKaXTxpj9zYup8pE5WOVRfmwuqByin0mk kyle.reed@uconn.edu
+The key's randomart image is:
++--[ED25519 256]--+
+|             .+OB|
+|             .++X|
+|             ooo*|
+|        .   .o.*.|
+|     . oS. .. *..|
+|    . =  oo. ..+o|
+|   . E  ....ooo+=|
+|    o     .+.o..=|
+|           o=.   |
++----[SHA256]-----+
+
+Kyle@DESKTOP-VN55514 MINGW64 ~/Stat3255
+#Clip the key url to link to Github
+$ clip < ~/STAT3255/Key1.pub
+```
+
+## Potential Problem 
+
+When I attempted to use the url I extracted above it did not work as I had accidentaly placed the key in the wrong directory
+To solve this problem I simply moved it to the correct location and then added it to the SSH agent
+
+``` {bash}
+Kyle@DESKTOP-VN55514 MINGW64 ~/Stat3255
+#Check to ensure it is properly linked (it's not in this case)
+$  ssh -T git@github.com
+The authenticity of host 'github.com (140.82.114.4)' can't be established.
+ED25519 key fingerprint is SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'github.com' (ED25519) to the list of known hosts.
+git@github.com: Permission denied (publickey).
+
+Kyle@DESKTOP-VN55514 MINGW64 ~/Stat3255
+#I moved my key to the proper directory so I could link it
+$ mv /c/Users/Kyle/STAT3255/Key1 ~/.ssh/Key1
+mv /c/Users/Kyle/STAT3255/Key1.pub ~/.ssh/Key1.pub
+
+Kyle@DESKTOP-VN55514 MINGW64 ~/Stat3255
+#Confirm the Key is there
+$ ls ~/.ssh
+Key1  Key1.pub  known_hosts
+```
+
+## Add The SSH Key To The SSH-Agent
+
+```{bash}
+Kyle@DESKTOP-VN55514 MINGW64 ~/Stat3255
+#Check agent needed
+$ eval $(ssh-agent -s)
+Agent pid 1241
+
+Kyle@DESKTOP-VN55514 MINGW64 ~/Stat3255
+#Add the key to the agent
+$ ssh-add ~/.ssh/Key1
+Enter passphrase for /c/Users/Kyle/.ssh/Key1:
+Identity added: /c/Users/Kyle/.ssh/Key1 (kyle.reed@uconn.edu)
+
+Kyle@DESKTOP-VN55514 MINGW64 ~/Stat3255
+#Clip the key to the clipboard
+$ clip < ~/.ssh/Key1.pub
+
+#Before doing the next line ensure that the key is added to Github
+
+Kyle@DESKTOP-VN55514 MINGW64 ~/Stat3255
+#Ensure that the SSH key is linked to Github
+$ ssh -T git@github.com
+Hi kreed36! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+## Add The Key To Github
+
+1. Now you should have the key copied to your clipboard
+2. Go back into Github: enter settings: then "SSH and GPG keys"
+3. From there press "New SSH Key" and enter neccassary information to connect the key
+4. Once you are done you should see that under SSH Key it shows your key with the URL connected 
+
+# Getting Started With Quarto
+
+1. Install Quarto on your device by using the link: https://quarto.org/docs/get-started/
+2. Once you are on the site, select the blue download buttom
+3. Below the download you will the “Step 2” which involves selecting a tool to begin the GitHub exercise in part 3, I personally selected RStudio, as it is what I am familiar with
+4. Once Quarto is downloaded and setup, choose a tool to run quarto with and download that
+5. Open the tool of choice and move on to part 3
+
+# Quarto Basics
+
+Line plot on a polar axis:
+
+1. Once you are in your selected tool, create a new python chunk (see below) using the syntax "```{python}" to start the shell and ```" to close it
+2. Refernecing the tutorial found on Quarto's website, you can copy down the code used to construct a line plot on polar axis: https://quarto.org/docs/get-started/hello/vscode.html
+3. Run the chunk to ensure that it produces the proper plot as seen below
+
+```{python}
+# Import the numpy for calculations
+import numpy as np
+# Import pyplot to plot
+import matplotlib.pyplot as plt
+
+# Create value array
+r = np.arange(0, 2, 0.01)
+# Define theta
+theta = 4 * np.pi * r
+# Create figure and axes that are 'polar'
+fig, ax = plt.subplots(
+  subplot_kw={'projection': 'polar'})
+#Plot theta and r
+ax.plot(theta, r)
+# Set the plot
+ax.set_rticks([0.5, 1, 1.5, 2])
+# Set the grid
+ax.grid(True)
+# Show the plot
+plt.show()
+```
+
+# Submission
+
+1. Enter the terminal and use the line render the qmd to a pdf
+2. Ensure that you have the neccassary LaTeX installed
+3. Once you have the PDF, enter Github in the assignment github-classroom
+4. Click "Create a new release" and attatch the PDF file created and submit
